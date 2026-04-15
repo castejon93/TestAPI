@@ -1,0 +1,10 @@
+<Solution>
+  <Project Path="Application/Application.csproj" Id="ec4205d5-e624-4f60-a6bf-12f73dd530b9" />
+  <Project Path="Domain/Domain.csproj" Id="92328d83-dad5-420f-8cce-c2c8e3c8796b" />
+  <Project Path="Infrastructure/Infrastructure.csproj" Id="7dda64e9-32e7-4391-8aed-30cd2986b3a7" />
+  <Project Path="Shared/Shared.csproj" Id="097fa850-04ac-45b1-9c55-86372cb4cdf7" />
+  <Project Path="WebAPI/WebAPI.csproj" Id="8d85fe6d-2bac-47a3-b75d-e821e894d4af" />
+  <Project Path="docker-compose.dcproj" Id="a1b2c3d4-e5f6-7890-abcd-ef1234567890">
+    <Build />
+  </Project>
+</Solution>

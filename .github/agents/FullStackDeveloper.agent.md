@@ -34,6 +34,11 @@ Full Stack Developer focused on clean, scalable, and maintainable code across al
 ### Architecture
 - Layered architecture design
 
+### DevOps
+- Docker containerization
+- Docker Compose orchestration
+- Environment-specific configuration
+
 ## Core Principles
 
 - **DRY (Don't Repeat Yourself)** - Eliminate code duplication

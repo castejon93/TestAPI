@@ -1,0 +1,47 @@
+# =============================================================================
+# .dockerignore - Files and folders to exclude from Docker build context
+# =============================================================================
+
+# Git
+**/.git
+**/.gitignore
+
+# Visual Studio
+**/.vs
+**/bin
+**/obj
+**/*.user
+**/*.suo
+**/*.userosscache
+**/*.sln.docstates
+
+# Build results
+**/[Dd]ebug/
+**/[Rr]elease/
+**/x64/
+**/x86/
+
+# NuGet
+**/packages/
+**/*.nupkg
+
+# Test results
+**/TestResults/
+
+# Docker files (not needed in build context)
+**/Dockerfile*
+**/.dockerignore
+**/docker-compose*.yml
+
+# IDE specific
+**/.idea
+**/.vscode
+**/*.swp
+**/*.swo
+
+# Logs
+**/*.log
+
+# Local environment files
+**/.env.local
+**/appsettings.Development.json

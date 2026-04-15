@@ -1,0 +1,101 @@
+# =============================================================================
+# Docker Compose Configuration for .NET 10 Clean Architecture Project
+# Services: SQL Server 2022 + WebAPI
+# =============================================================================
+
+services:
+  # ---------------------------------------------------------------------------
+  # SQL Server 2022 Database Service
+  # ---------------------------------------------------------------------------
+  sqlserver:
+    # Microsoft SQL Server 2022 image for Linux
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: test-sqlserver
+    
+    # Environment variables for SQL Server configuration
+    environment:
+      # Accept the End User License Agreement (required)
+      - ACCEPT_EULA=Y
+      # SA (System Administrator) password - CHANGE THIS IN PRODUCTION!
+      # Password must be: 8+ chars, uppercase, lowercase, number, special char
+      - MSSQL_SA_PASSWORD=YourStrong@Password123
+      # SQL Server edition (Developer is free for development/testing)
+      - MSSQL_PID=Developer
+    
+    # Port mapping: host:container
+    # Access SQL Server from host machine at localhost:1433
+    ports:
+      - "1433:1433"
+    
+    # Persist database data using a named volume
+    # This ensures data survives container restarts
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    
+    # Restart policy - restart unless explicitly stopped
+    restart: unless-stopped
+    
+    # Health check to verify SQL Server is ready
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "YourStrong@Password123" -C -Q "SELECT 1" || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    
+    # Network configuration
+    networks:
+      - test-network
+
+  # ---------------------------------------------------------------------------
+  # .NET 10 WebAPI Service
+  # ---------------------------------------------------------------------------
+  webapi:
+    # Build from Dockerfile in current directory
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: test-webapi
+    
+    # Environment variables for the application
+    environment:
+      # Set the environment to Docker (loads appsettings.Docker.json)
+      - ASPNETCORE_ENVIRONMENT=Docker
+      # Connection string for SQL Server container
+      # 'sqlserver' is the service name (DNS name in Docker network)
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=TestDb;User Id=sa;Password=YourStrong@Password123;TrustServerCertificate=True;
+      # JWT Settings (override if needed)
+      - JwtSettings__Issuer=http://localhost:5000
+      - JwtSettings__Audience=http://localhost:5000
+    
+    # Port mapping: host:container
+    # Access the API from host machine at http://localhost:5000
+    ports:
+      - "5000:8080"
+    
+    # Wait for SQL Server to be healthy before starting
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    
+    # Restart policy
+    restart: unless-stopped
+    
+    # Network configuration
+    networks:
+      - test-network
+
+# =============================================================================
+# Named Volumes - Persist data outside containers
+# =============================================================================
+volumes:
+  sqlserver-data:
+    name: test-sqlserver-data
+
+# =============================================================================
+# Networks - Isolated network for service communication
+# =============================================================================
+networks:
+  test-network:
+    name: test-network
+    driver: bridge
